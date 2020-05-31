@@ -11,6 +11,11 @@ import freechips.rocketchip.regmapper.{HasRegMap, RegField}
 import freechips.rocketchip.tilelink._
 import freechips.rocketchip.util.UIntIsOneOf
 
+import chisel3.util.experimental.loadMemoryFromFile                             
+import freechips.rocketchip.tilelink.TLRAM                                      
+import freechips.rocketchip.tilelink.TLFragmenter                               
+import freechips.rocketchip.diplomacy.AddressSet  
+
 // DOC include start: GCD params
 case class GCDParams(
   address: BigInt = 0x2000,
@@ -181,6 +186,12 @@ trait CanHavePeripheryGCD { this: BaseSubsystem =>
     }
     case None => None
   }
+
+  val testRAM = LazyModule(                                                      
+    new TLRAM(AddressSet(0x40000000, 0x1FFF), beatBytes = cbus.beatBytes)   
+  )                                                                             
+
+  testRAM.node := cbus.coupleTo("bootrom") { TLFragmenter(cbus) := _ }
 }
 // DOC include end: GCD lazy trait
 
@@ -195,6 +206,8 @@ trait CanHavePeripheryGCDModuleImp extends LazyModuleImp {
     }
     case None => None
   }
+                                                                                  
+  loadMemoryFromFile(outer.testRAM.module.mem, "test_ram.hex")
 }
 
 // DOC include end: GCD imp trait
