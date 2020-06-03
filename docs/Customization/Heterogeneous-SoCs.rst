@@ -13,7 +13,7 @@ When used together you can create a heterogeneous system.
 
 The following example shows a dual core BOOM with a single core Rocket.
 
-.. literalinclude:: ../../generators/chipyard/src/main/scala/HeteroConfigs.scala
+.. literalinclude:: ../../generators/chipyard/src/main/scala/config/HeteroConfigs.scala
     :language: scala
     :start-after: DOC include start: DualBoomAndRocket
     :end-before: DOC include end: DualBoomAndRocket
@@ -40,13 +40,13 @@ The config fragment to add to your system would look something like the followin
         val boomTile1 = BoomTileParams(...) // params for boom core 1
         val boomTile2 = BoomTileParams(...) // params for boom core 2
         val boomTile3 = BoomTileParams(...) // params for boom core 3
-        boomTile0 ++ boomTile1 ++ boomTile2 ++ boomTile3
+        Seq(boomTile0, boomTile1, boomTile2, boomTile3)
       }
 
       case RocketTilesKey => {
         val rocketTile0 = RocketTileParams(...) // params for rocket core 0
         val rocketTile1 = RocketTileParams(...) // params for rocket core 1
-        rocketTile0 ++ rocketTile1
+        Seq(rocketTile0, rocketTile1)
       }
     })
 
@@ -56,7 +56,6 @@ Then you could use this new config fragment like the following.
 
     class SixCoreConfig extends Config(
       new WithTSI ++
-      new WithNoGPIO ++
       new WithBootROM ++
       new WithUART ++
       new freechips.rocketchip.subsystem.WithNoMMIOPort ++
@@ -72,7 +71,7 @@ Adding Hwachas
 Adding a Hwacha accelerator is as easy as adding the ``DefaultHwachaConfig`` so that it can setup the Hwacha parameters and add itself to the ``BuildRoCC`` parameter.
 An example of adding a Hwacha to all tiles in the system is below.
 
-.. literalinclude:: ../../generators/chipyard/src/main/scala/HeteroConfigs.scala
+.. literalinclude:: ../../generators/chipyard/src/main/scala/config/HeteroConfigs.scala
     :language: scala
     :start-after: DOC include start: BoomAndRocketWithHwacha
     :end-before: DOC include end: BoomAndRocketWithHwacha
@@ -88,7 +87,7 @@ Named ``MultiRoCCKey``, this key allows you to attach RoCC accelerators based on
 For example, using this allows you to create a 8 tile system with a RoCC accelerator on only a subset of the tiles.
 An example is shown below with two BOOM cores, and one Rocket tile with a RoCC accelerator (Hwacha) attached.
 
-.. literalinclude:: ../../generators/chipyard/src/main/scala/HeteroConfigs.scala
+.. literalinclude:: ../../generators/chipyard/src/main/scala/config/HeteroConfigs.scala
     :language: scala
     :start-after: DOC include start: DualBoomAndRocketOneHwacha
     :end-before: DOC include end: DualBoomAndRocketOneHwacha
